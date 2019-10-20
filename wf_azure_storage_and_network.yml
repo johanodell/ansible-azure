@@ -1,0 +1,49 @@
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  vars:
+
+  tasks:
+  - name: Create the resource group
+    azure_rm_resourcegroup:
+      name: "{{ azure_vm_resource_group }}"
+      location: "{{ azure_vm_location }}"
+
+  - name: Get storage account details
+    azure_rm_storageaccount_facts:
+      resource_group: "{{ azure_vm_resource_group }}"
+    register: output_storage_accounts
+
+  - name: set storage_account_name
+    set_fact:
+      azure_vm_storageaccount_name: "{{ output_storage_accounts.ansible_facts.storageaccounts[0].name }}"
+    when: output_storage_accounts.ansible_facts.storageaccounts[0] is defined
+
+  - name: try to set a unique storage account name
+    set_fact:
+      azure_vm_storageaccount_name: "{{ azure_vm_resource_group }}{{ 10000000 |random}}"
+    when: azure_vm_storageaccount_name is undefined
+
+  - name: Create a storage account
+    azure_rm_storageaccount:
+      resource_group: "{{ azure_vm_resource_group }}"
+      name: "{{ azure_vm_storageaccount_name }}"
+      type: "{{ azure_vm_storage_type }}"
+
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: "{{ azure_vm_resource_group }}"
+      name: "{{ azure_vm_resource_group }}-vnet"
+      address_prefixes: "10.0.0.0/16"
+
+  - name: Add subnet
+    azure_rm_subnet:
+      resource_group: "{{ azure_vm_resource_group }}"
+      name: default
+      address_prefix: "10.0.1.0/24"
+      virtual_network: "{{ azure_vm_resource_group }}-vnet"
+
+  - name: make azure_vm_storageaccount_name variable available for other playbooks
+    set_stats:
+      data:
+        azure_vm_storageaccount_name: "{{ azure_vm_storageaccount_name }}"
