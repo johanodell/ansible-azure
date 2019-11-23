@@ -6,7 +6,6 @@
     location: northeurope
     storage_type: Standard_LRS
     os_disk_type: StandardSSD_LRS
-    os_disk_size_gb: 10
     vm_size: Standard_B1ms
     admin_username: demouser
     ssh_pub_key:
@@ -124,7 +123,6 @@
       name: "{{ vm_prefix }}{{ item }}"
       vm_size: "{{ vm_size }}"
       managed_disk_type: "{{ os_disk_type }}"
-      os_disk_size_gb: "{{ os_disk_size_gb }}"
       storage_account_name: "{{ storageaccount_name }}"
       admin_username: "{{ admin_username }}"
       ssh_password_enabled: false
