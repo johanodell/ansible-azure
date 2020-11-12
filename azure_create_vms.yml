@@ -128,7 +128,7 @@
       ssh_password_enabled: false
       ssh_public_keys:
         - path: "/home/{{ admin_username }}/.ssh/authorized_keys"
-          key_data: "{{ ssh_pub_key }}"
+          key_data: "{{ azure_vm_ssh_pub_key }}"
       network_interfaces: "{{ vm_prefix }}{{ item }}-Nic"
       image: "{{ image }}"
     with_sequence: start=1 end={{num_vm|int}}
