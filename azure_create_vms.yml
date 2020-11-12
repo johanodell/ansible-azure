@@ -80,7 +80,7 @@
   - name: Create Network Security Group that allows SSH/Cockpit
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
-      name: "{{ resource_group }}-nsg"
+      name: "{{ resource_group }}_nsg"
       rules:
         - name: SSH
           protocol: Tcp
